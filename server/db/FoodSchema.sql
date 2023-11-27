@@ -1,0 +1,73 @@
+DROP SCHEMA IF EXISTS Food;
+
+CREATE SCHEMA Food;
+
+USE Food;
+
+CREATE TABLE User
+(
+    id                  INT AUTO_INCREMENT PRIMARY KEY,
+    username            VARCHAR(50),
+    email               VARCHAR(50),
+    password            VARCHAR(50),
+);
+
+CREATE TABLE Food 
+(
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    name            VARCHAR(50),
+    location        VARCHAR(50),
+);
+
+CREATE TABLE Rating 
+(
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    user_id         INT,
+    food_id         INT,
+    score           INT,
+    review          VARCHAR(255),
+    image_url       VARCHAR(255),
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (food_id) REFERENCES food (id)
+);
+
+CREATE TABLE DietaryRestriction 
+(
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    name          ENUM('Vegetarian', 'Vegan', 'Gluten-Free', 'None'),
+);
+
+CREATE TABLE UserDietaryRestriction
+(
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    user_id       INT,
+    diet_id       INT,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (diet_id) REFERENCES dietaryRestriction (id)
+);
+
+CREATE TABLE FoodDieataryRestriction
+(
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    food_id       INT,
+    diet_id       INT,
+    FOREIGN KEY (food_id) REFERENCES food (id),
+    FOREIGN KEY (diet_id) REFERENCES dietaryRestriction (id)
+);
+
+CREATE TABLE Ingredient
+(
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    name          VARCHAR(50),
+);
+
+CREATE TABLE IngredientFood
+(
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    food_id       INT,
+    ingredient_id INT,
+    FOREIGN KEY (food_id) REFERENCES food (id),
+    FOREIGN KEY (ingredient_id) REFERENCES ingredient (id)
+);
