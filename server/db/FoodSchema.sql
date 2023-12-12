@@ -1,5 +1,7 @@
 DROP SCHEMA IF EXISTS Food;
 
+
+
 CREATE SCHEMA Food;
 
 USE Food;
@@ -9,17 +11,16 @@ CREATE TABLE User
     id                  INT AUTO_INCREMENT PRIMARY KEY,
     username            VARCHAR(50),
     email               VARCHAR(50),
-    password            VARCHAR(50),
+    password            VARCHAR(50)
 );
 
-CREATE TABLE Food 
+CREATE TABLE Food
 (
     id              INT AUTO_INCREMENT PRIMARY KEY,
-    name            VARCHAR(50),
-    location        VARCHAR(50),
+    name            VARCHAR(10000)
 );
 
-CREATE TABLE Rating 
+CREATE TABLE Rating
 (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     user_id         INT,
@@ -29,26 +30,29 @@ CREATE TABLE Rating
     image_url       VARCHAR(255),
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (user_id) REFERENCES User (id),
     FOREIGN KEY (food_id) REFERENCES food (id)
 );
 
-CREATE TABLE DietaryRestriction 
+CREATE TABLE DietaryRestriction
 (
     id            INT AUTO_INCREMENT PRIMARY KEY,
-    name          ENUM('Vegetarian', 'Vegan', 'Gluten-Free', 'None'),
+    name          ENUM('Vegetarian', 'Vegan', 'Gluten-Free', 'None')
 );
+
+INSERT INTO DietaryRestriction (name) VALUES ('Vegetarian'), ('Vegan'), ('Gluten-Free'), ('None');
+
 
 CREATE TABLE UserDietaryRestriction
 (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     user_id       INT,
     diet_id       INT,
-    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (user_id) REFERENCES User (id),
     FOREIGN KEY (diet_id) REFERENCES dietaryRestriction (id)
 );
 
-CREATE TABLE FoodDieataryRestriction
+CREATE TABLE FoodDietaryRestriction
 (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     food_id       INT,
@@ -59,11 +63,12 @@ CREATE TABLE FoodDieataryRestriction
 
 CREATE TABLE Ingredient
 (
-    id            INT AUTO_INCREMENT PRIMARY KEY,
-    name          VARCHAR(50),
+    id   INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE IngredientFood
+
+CREATE TABLE FoodIngredientMap
 (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     food_id       INT,
