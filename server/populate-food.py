@@ -18,7 +18,6 @@ def insert_food(name):
     return cursor.lastrowid
 
 # Function to insert ingredient
-# Function to insert ingredient
 def insert_ingredient(name):
     if not name or name.strip() == "":
         return None
