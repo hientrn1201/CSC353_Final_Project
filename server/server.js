@@ -33,28 +33,104 @@ db.connect((err) => {
 });
 
 app.get("/api/v1/foods", async (req, res) => {
-    try {
-      const [results] = await db.query("SELECT * FROM food");
-      res.status(200).json({
-        status: "success",
-        results: results.length,
-        data: results,
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send("Server Error");
+  const sql = `
+  SELECT
+    f.id AS id,
+    f.name AS name,
+    AVG(r.score) AS avgRatings,
+    GROUP_CONCAT(i.name) AS ingredients,
+    GROUP_CONCAT(dr.name) AS dietaryRestrictions
+  FROM
+    Food f
+    LEFT JOIN Rating r ON f.id = r.food_id
+    LEFT JOIN FoodIngredientMap fim ON f.id = fim.food_id
+    LEFT JOIN Ingredient i ON fim.ingredient_id = i.id
+    LEFT JOIN FoodDietaryRestriction fdr ON f.id = fdr.food_id
+    LEFT JOIN DietaryRestriction dr ON fdr.diet_id = dr.id
+  GROUP BY
+    f.id, f.name;
+  `
+  try {
+    const [results] = await db.query(sql);
+    res.status(200).json({
+      status: "success",
+      results: results.length,
+      data: results,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.get("/api/v1/foods/:id", async (req, res) => {
+  const { id } = req.params;
+  const queryFood = `
+  SELECT
+    f.id AS id,
+    f.name AS name,
+    AVG(r.score) AS avgRatings,
+    GROUP_CONCAT(i.name) AS ingredients,
+    GROUP_CONCAT(dr.name) AS dietaryRestrictions
+  FROM
+    Food f
+    LEFT JOIN Rating r ON f.id = r.food_id
+    LEFT JOIN FoodIngredientMap fim ON f.id = fim.food_id
+    LEFT JOIN Ingredient i ON fim.ingredient_id = i.id
+    LEFT JOIN FoodDietaryRestriction fdr ON f.id = fdr.food_id
+    LEFT JOIN DietaryRestriction dr ON fdr.diet_id = dr.id
+  WHERE
+    f.id = ?
+  GROUP BY
+    f.id, f.name;
+  `
+
+  const queryReviews = `
+  SELECT
+    r.id AS id,
+    r.review,
+    r.score,
+    u.username
+  FROM
+    Rating r
+  JOIN User u ON r.user_id = u.id
+  WHERE
+    r.food_id = ?;
+  `
+
+  try {
+    const [results] = await db.query(queryFood, 
+      [id,]
+    );
+
+    const [reviews] = await db.query(queryReviews,
+      [id,]
+    );
+
+    const data = {
+      ...results[0],
+      reviews
     }
+    
+    res.status(200).json({
+      status: "success",
+      data: data,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server Error");
+  }
 });
 
 
 
 app.post(`/api/v1/foods/:id/addRating`, async (req, res) => {
-  const { user_id, score, review, image_url } = req.body;
+  const { user_id, score, review } = req.body;
   const { id } = req.params;
   try {
     const [results] = await db.query(
-      "INSERT INTO rating(user_id, food_id, score, review, image_url) VALUES (?,?,?,?,?)",
-      [user_id, id, score, review, image_url]
+      "INSERT INTO rating(user_id, food_id, score, review) VALUES (?,?,?,?)",
+      [user_id, id, score, review]
     ).catch(err => {throw err});
 
     res.status(200).json({
