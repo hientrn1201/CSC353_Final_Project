@@ -14,7 +14,7 @@ app.use(express.json()); // To parse JSON bodies
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '33511804',
+    password: 'password',
     database: 'Food'
 }).promise();
 
@@ -52,13 +52,14 @@ app.post(`/api/v1/foods/:id/addRating`, async (req, res) => {
   const { user_id, score, review, image_url } = req.body;
   const { id } = req.params;
   try {
-    const results = await db.query(
-      "INSERT INTO rating(user_id, food_id, score, review, image_url) VALUES($1, $2, $3, $4, $5) returning *",
+    const [results] = await db.query(
+      "INSERT INTO rating(user_id, food_id, score, review, image_url) VALUES (?,?,?,?,?)",
       [user_id, id, score, review, image_url]
-    );
+    ).catch(err => {throw err});
+
     res.status(200).json({
       status: "success",
-      data: results.rows[0],
+      data: results.insertId,
     });
   } catch (error) {
     res.send(error);
