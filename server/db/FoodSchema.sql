@@ -27,7 +27,6 @@ CREATE TABLE Rating
     food_id         INT,
     score           INT,
     review          VARCHAR(255),
-    image_url       VARCHAR(255),
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES User (id),
