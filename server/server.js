@@ -1,104 +1,52 @@
-require("dotenv").config();
-const express = require("express");
-const PORT = process.env.PORT || 8080;
-const morgan = require("morgan");
-const db = require("./db");
-const cors = require("cors");
+const express = require('express');
+const mysql = require('mysql2');
+const cors = require('cors');
 
 const app = express();
+const port = process.env.PORT || 8000;
 
-app.use(morgan("dev"));
-app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
+app.use(express.json()); // To parse JSON bodies
 
-app
-  .route("/api/v1/foods")
-  .get(async (req, res, next) => {
+// Database connection using promise() for async/await support
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '33511804',
+    database: 'Food'
+}).promise();
+
+db.connect((err) => {
+    if (err) {
+        throw err;
+    }
+    console.log('Connected to database');
+});
+
+db.connect((err) => {
+    if (err) {
+        throw err;
+    }
+    console.log('Connected to database');
+});
+
+app.get("/api/v1/foods", async (req, res) => {
     try {
-      const results = await db.query(
-        "SELECT * FROM food LEFT JOIN (SELECT food_id, COUNT(*), TRUNC(AVG(score)) AS average_score FROM rating GROUP BY food_id) ratings ON food.id = ratings.food_id"
-      );
+      const [results] = await db.query("SELECT * FROM food");
       res.status(200).json({
         status: "success",
-        results: results.rows.length,
-        data: results.rows,
+        results: results.length,
+        data: results,
       });
     } catch (error) {
       console.log(error);
+      res.status(500).send("Server Error");
     }
-  })
-  .post(async (req, res, next) => {
-    const { name, location } = req.body;
-    try {
-      const results = await db.query(
-        "INSERT INTO food(name, location) VALUES($1, $2) returning *",
-        [name, location]
-      );
-      res.status(200).json({
-        status: "success",
-        data: results.rows[0],
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  });
+});
 
-app
-  .route("/api/v1/foods/:id")
-  .get(async (req, res, next) => {
-    try {
-      const { id } = req.params;
 
-      const results = await db.query(
-        "SELECT * FROM food LEFT JOIN (SELECT food_id, COUNT(*), TRUNC(AVG(score)) AS average_score FROM rating GROUP BY food_id) ratings ON food.id = ratings.food_id WHERE id = $1",
-        [id]
-      );
-      const ratings = await db.query(
-        "SELECT * FROM rating WHERE food_id = $1",
-        [id]
-      );
-      res.status(200).json({
-        status: "success",
-        data: {
-          food: results.rows[0],
-          ratings: ratings.rows,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  })
-  .put(async (req, res, next) => {
-    const { id } = req.params;
-    const { name, location } = req.body;
-    try {
-      const results = await db.query(
-        "UPDATE food SET name = $1, location = $2 WHERE id = $3 returning *",
-        [name, location, id]
-      );
-      res.status(200).json({
-        status: "success",
-        data: results.rows[0],
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  })
-  .delete(async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const results = await db.query(
-        "DELETE FROM food WHERE id = $1 returning id",
-        [id]
-      );
-      res.status(201).json({
-        status: "success",
-        data: results.rows[0],
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  });
 
 app.post(`/api/v1/foods/:id/addRating`, async (req, res) => {
   const { user_id, score, review, image_url } = req.body;
@@ -118,4 +66,7 @@ app.post(`/api/v1/foods/:id/addRating`, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log("Magic happening on PORT", +PORT));
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+

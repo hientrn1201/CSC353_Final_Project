@@ -1,14 +1,14 @@
 import React from "react"
-import AddRestaurant from "../components/AddRestaurant"
+import AddFood from "../components/AddFood"
 import Header from "../components/Header"
-import RestaurantList from "../components/RestaurantList"
+import FoodList from "../components/FoodList"
 
 const Home = (props) => {
   return (
     <div>
       <Header/>
-      <AddRestaurant/>
-      <RestaurantList />
+      <AddFood/>
+      <FoodList />
     </div>
   )
 };

@@ -71,7 +71,8 @@ with open('food-data.csv', 'r') as csvfile:
         ingredients = row['Ingredient'].split(', ')
         for ingredient in ingredients:
             ingredient_id = insert_ingredient(ingredient)
-            insert_ingredient_food(food_id, ingredient_id)
+            if ingredient_id:  # Only insert if ingredient_id is not None
+                insert_ingredient_food(food_id, ingredient_id)
 
         diets = row['Diets'].split(', ')
         for diet in diets:

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import RestaurantFinder from "../apis/RestaurantFinder";
+import FoodFinder from "../apis/FoodFinder";
 
 const AddReview = () => {
   const {id} = useParams()
@@ -13,7 +13,7 @@ const AddReview = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    RestaurantFinder.post(`/${id}/addReview`, {
+    FoodFinder.post(`/${id}/addReview`, {
       name,
       rating,
       review
