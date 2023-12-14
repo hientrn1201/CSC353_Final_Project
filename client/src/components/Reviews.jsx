@@ -2,7 +2,7 @@ import React from "react";
 import StarRating from "./StarRating";
 
 const Reviews = (props) => {
-  const { reviews } = props.reviews;
+  const reviews = props.reviews;
   
   return (
     <div className="row row-cols-3 mb-2">
@@ -15,7 +15,7 @@ const Reviews = (props) => {
           <div className="card-header">{review.name}</div>
           <div className="card-body">
             <h5 className="card-title">
-              <StarRating rating={review.rating} />
+              <StarRating rating={review.score} />
             </h5>
             <p className="card-text">{review.review}</p>
           </div>

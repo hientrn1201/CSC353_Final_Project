@@ -14,7 +14,7 @@ const FoodDetailPage = () => {
   const {selectedFood, setSelectedFood} = useContext(FoodsContext);
 
   useEffect(() => {
-    FoodFinder.get(`/${id}`) // Adjust the API call
+    FoodFinder.get(`/foods/${id}`) // Adjust the API call
       .then((response) => {
         const data = response.data.data;
         setSelectedFood(data);
@@ -41,11 +41,11 @@ const FoodDetailPage = () => {
     <div>
       {selectedFood && (
         <>
-          <h1 className="font-weight-light display-1 text-center">{selectedFood.food.name}</h1>
+          <h1 className="font-weight-light display-1 text-center">{selectedFood.name}</h1>
           {/* Adjust the displayed information according to your food data structure */}
           {/* Include other food-specific details like ingredients, dietary restrictions, etc. */}
           <div className="mt-3">
-            <Reviews reviews={selectedFood}/> {/* Adjust as needed */}
+            <Reviews reviews={selectedFood.reviews}/> {/* Adjust as needed */}
           </div>
           <AddReview /> {/* If applicable to food */}
         </>
