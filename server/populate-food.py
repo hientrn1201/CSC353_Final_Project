@@ -2,7 +2,6 @@ import csv
 
 import mysql.connector
 
-# Establish a database connection
 db = mysql.connector.connect(
     host='localhost',
     user='root',
@@ -86,8 +85,6 @@ def get_dietary_restriction_id(diet_name):
 
 
 # Function to map CSV diet abbreviations to ENUM values
-
-
 def map_diet_to_enum(diet_abbreviation):
     mapping = {
         'VG': 'Vegetarian',

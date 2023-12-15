@@ -143,15 +143,11 @@ app.post(`/api/v1/users/signup`, async (req, res) => {
     console.log('Received username:', username);
 
     try {
-        // Query the database for an existing user
         const [existingUsers, fields] = await db.query(
             "SELECT * FROM user WHERE username = ?",
             [username]
         );
 
-        console.log('Query result:', existingUsers);
-
-        // Check if the user array is empty
         if (existingUsers.length > 0) {
             return res.status(400).json({
                 status: "fail",
@@ -159,13 +155,10 @@ app.post(`/api/v1/users/signup`, async (req, res) => {
             });
         }
 
-        // No existing user found, proceed to insert the new user
         const [result] = await db.query(
             "INSERT INTO user(username, password) VALUES (?, ?)",
             [username, password]
         );
-
-        console.log('User created with ID:', result.insertId);
 
         return res.status(201).json({
             status: "success",
@@ -185,8 +178,6 @@ app.post(`/api/v1/users/signup`, async (req, res) => {
 
 
 app.post(`/api/v1/users/login`, async (req, res) => {
-    console.log("entered")
-
     const {username, password} = req.body;
     try {
         const [results] = await db.query(
