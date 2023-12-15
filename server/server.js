@@ -13,7 +13,7 @@ app.use(express.json());
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '33511804',
+    password: 'password',
     database: 'Food'
 }).promise();
 
@@ -140,7 +140,7 @@ app.post(`/api/v1/foods/:id/addReview`, async (req, res) => {
 
 app.post(`/api/v1/users/signup`, async (req, res) => {
     const {username, password} = req.body;
-    console.log('Received username:', username);
+    // console.log('Received username:', username);
 
     try {
         const [existingUsers, fields] = await db.query(

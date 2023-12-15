@@ -30,8 +30,8 @@ export const Auth = () => {
     const handleSignUp = async () => {
         try {
             await auth.signup(signUpUser.username, signUpUser.password);
-            alert("Please Log In to leave a review")
-            history.push('/auth')
+            alert("Sign up successful!")
+            history.push('/')
         } catch (err) {
             if (err.response) {
                 alert(err.response.data.message);

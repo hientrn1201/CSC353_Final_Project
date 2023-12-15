@@ -8,7 +8,8 @@ export const AuthProvider = ({children}) => {
 
     const signup = async (username, password) => {
         try {
-            await FoodFinder.post("/users/signup", {username, password});
+            const response = await FoodFinder.post("/users/signup", {username, password});
+            setCurrentUser(response.data.data);
         } catch (err) {
             throw err;
         }
