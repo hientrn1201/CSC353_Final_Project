@@ -6,15 +6,14 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
 
-    const signup = async (username, password) => {
-        try {
-            const response = await FoodFinder.post("/users/signup", { username, password });
-            const id = response.data.data;
-            setCurrentUser({ id, username });
-        } catch (err) {
-            throw err;
-        }
+   const signup = async (username, password) => {
+    try {
+        await FoodFinder.post("/users/signup", { username, password });
+    } catch (err) {
+        throw err;
     }
+}
+
 
     const login = async (username, password) => {
         try {

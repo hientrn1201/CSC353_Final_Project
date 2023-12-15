@@ -115,46 +115,81 @@ app.get("/api/v1/foods/:id", async (req, res) => {
 
 
 app.post(`/api/v1/foods/:id/addReview`, async (req, res) => {
-    const {userId, rating, review} = req.body;
-    const {id} = req.params;
+    const { userId, rating, review } = req.body;
+    const { id } = req.params;
     try {
         const [results] = await db.query(
-            "INSERT INTO rating(user_id, food_id, score, review) VALUES (?,?,?,?)",
+            "INSERT INTO rating (user_id, food_id, score, review) VALUES (?, ?, ?, ?)",
             [userId, id, rating, review]
-        ).catch(err => {
-            throw err
-        });
+        );
 
-        res.status(200).json({
+        res.status(201).json({
             status: "success",
-            data: results.insertId,
+            data: {
+                insertId: results.insertId,
+            },
         });
     } catch (error) {
-        res.send(error);
-        console.log(error);
+        console.error("Error in adding review:", error);
+        res.status(500).json({
+            status: "error",
+            message: "An error occurred during the review submission process.",
+        });
     }
 });
+
 
 app.post(`/api/v1/users/signup`, async (req, res) => {
-    const {username, password} = req.body;
+    const { username, password } = req.body;
+    console.log('Received username:', username);
+
     try {
-        // Check if username already exists
-        const [existedUser] = await db.query(
+        // Query the database for an existing user
+        const [existingUsers, fields] = await db.query(
             "SELECT * FROM user WHERE username = ?",
             [username]
-        ).catch(err => {
-            throw err
-        });
+        );
 
-    if (existedUser[0] !== undefined) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Username already exists",
-      });
+        console.log('Query result:', existingUsers);
+
+        // Check if the user array is empty
+        if (existingUsers.length > 0) {
+            return res.status(400).json({
+                status: "fail",
+                message: "Username already exists",
+            });
+        }
+
+        // No existing user found, proceed to insert the new user
+        const [result] = await db.query(
+            "INSERT INTO user(username, password) VALUES (?, ?)",
+            [username, password]
+        );
+
+        console.log('User created with ID:', result.insertId);
+
+        return res.status(201).json({
+            status: "success",
+            data: {
+                id: result.insertId,
+                username,
+            },
+        });
+    } catch (error) {
+        console.error('Signup error:', error);
+        return res.status(500).json({
+            status: "error",
+            message: "An error occurred during the signup process.",
+        });
     }
 });
 
+
+
+
 app.post(`/api/v1/users/login`, async (req, res) => {
+    console.log("entered")
+
     const {username, password} = req.body;
     try {
         const [results] = await db.query(
