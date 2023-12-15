@@ -16,6 +16,8 @@ const FoodList = () => {
     const [sortField, setSortField] = useState("");
     const [sortDirection, setSortDirection] = useState("asc");
     const {currentUser, logout} = useAuth();
+    const [searchQuery, setSearchQuery] = useState("");
+
 
     const handleLogout = async () => {
         try {
@@ -43,8 +45,11 @@ const FoodList = () => {
     }, [setFoods]);
 
     const filteredFoods = foods.filter(food => {
-        return (filterRating === 0 || food.avgRatings >= filterRating) &&
-            (filterRestriction === "" || food.dietaryRestrictions.includes(filterRestriction));
+        const matchesRating = filterRating === 0 || food.avgRatings >= filterRating;
+        const matchesRestriction = filterRestriction === "" || food.dietaryRestrictions.includes(filterRestriction);
+        const matchesSearch = searchQuery === "" || food.name.toLowerCase().includes(searchQuery.toLowerCase()) || food.ingredients.toLowerCase().includes(searchQuery.toLowerCase());
+
+        return matchesRating && matchesRestriction && matchesSearch;
     });
 
     const sortFoods = (field) => {
@@ -83,6 +88,13 @@ const FoodList = () => {
                 )}
             </div>
             <div className="mb-4">
+                <input
+                    type="text"
+                    className="search-input"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by Food Name or Ingredients"
+                />
                 <input
                     type="number"
                     className="filter-input"
