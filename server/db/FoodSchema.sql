@@ -1,7 +1,5 @@
 DROP SCHEMA IF EXISTS Food;
 
-
-
 CREATE SCHEMA Food;
 
 USE Food;
@@ -45,15 +43,6 @@ VALUES ('Vegetarian'),
        ('None');
 
 
-CREATE TABLE UserDietaryRestriction
-(
-    id      INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    diet_id INT,
-    FOREIGN KEY (user_id) REFERENCES User (id),
-    FOREIGN KEY (diet_id) REFERENCES dietaryRestriction (id)
-);
-
 CREATE TABLE FoodDietaryRestriction
 (
     id      INT AUTO_INCREMENT PRIMARY KEY,
@@ -78,7 +67,4 @@ CREATE TABLE FoodIngredientMap
     FOREIGN KEY (food_id) REFERENCES food (id),
     FOREIGN KEY (ingredient_id) REFERENCES ingredient (id)
 );
-
-INSERT INTO User (username, password)
-VALUES ('anhhoang1402', '33511804');
 
