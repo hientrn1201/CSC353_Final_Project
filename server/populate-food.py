@@ -1,4 +1,5 @@
 import csv
+
 import mysql.connector
 
 # Establish a database connection
@@ -83,6 +84,7 @@ def get_dietary_restriction_id(diet_name):
     result = cursor.fetchone()
     return result[0] if result else None
 
+
 # Function to map CSV diet abbreviations to ENUM values
 
 
@@ -93,9 +95,7 @@ def map_diet_to_enum(diet_abbreviation):
         'MWG': 'Gluten-Free',
         'None': 'None'
     }
-    return mapping.get(diet_abbreviation, 'None')  # Default to 'None'
-
-# Function to insert food-dietary restriction relationship
+    return mapping.get(diet_abbreviation, 'None')
 
 
 def insert_food_dietary_restriction(food_id, diet_id):

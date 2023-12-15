@@ -8,9 +8,8 @@ const port = process.env.PORT || 8000;
 app.use(cors({
     origin: 'http://localhost:3000'
 }));
-app.use(express.json()); // To parse JSON bodies
+app.use(express.json());
 
-// Database connection using promise() for async/await support
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -115,8 +114,8 @@ app.get("/api/v1/foods/:id", async (req, res) => {
 
 
 app.post(`/api/v1/foods/:id/addReview`, async (req, res) => {
-    const { userId, rating, review } = req.body;
-    const { id } = req.params;
+    const {userId, rating, review} = req.body;
+    const {id} = req.params;
     try {
         const [results] = await db.query(
             "INSERT INTO rating (user_id, food_id, score, review) VALUES (?, ?, ?, ?)",
@@ -140,7 +139,7 @@ app.post(`/api/v1/foods/:id/addReview`, async (req, res) => {
 
 
 app.post(`/api/v1/users/signup`, async (req, res) => {
-    const { username, password } = req.body;
+    const {username, password} = req.body;
     console.log('Received username:', username);
 
     try {
@@ -183,8 +182,6 @@ app.post(`/api/v1/users/signup`, async (req, res) => {
         });
     }
 });
-
-
 
 
 app.post(`/api/v1/users/login`, async (req, res) => {

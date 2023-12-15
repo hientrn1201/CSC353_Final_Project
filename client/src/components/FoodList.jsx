@@ -3,7 +3,7 @@ import {useHistory} from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner'; // Assuming you are using React Bootstrap
 import FoodFinder from '../apis/FoodFinder'; // Adjust the import based on your actual API file
 import {FoodsContext} from '../context/FoodsContext'; // Adjust the context import
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import {useAuth} from '../context/AuthContext'; // Import useAuth
 import StarRating from "./StarRating";
 import './FoodList.css'; // Import your CSS file
 
@@ -15,12 +15,12 @@ const FoodList = () => {
     const [filterRestriction, setFilterRestriction] = useState("");
     const [sortField, setSortField] = useState("");
     const [sortDirection, setSortDirection] = useState("asc");
-    const { currentUser, logout } = useAuth();
+    const {currentUser, logout} = useAuth();
 
     const handleLogout = async () => {
         try {
             await logout();
-            history.push('/auth'); // Or your route to the login page
+            history.push('/auth');
         } catch (error) {
             console.error("Logout Failed", error);
         }
@@ -62,8 +62,6 @@ const FoodList = () => {
         return 0;
     });
 
-
-
     if (isLoading) {
         return (
             <div className="d-flex justify-content-center">
@@ -74,12 +72,10 @@ const FoodList = () => {
         );
     }
 
-
-
     return (
 
         <div>
-             <div className="auth-button-container">
+            <div className="auth-button-container">
                 {currentUser ? (
                     <button onClick={handleLogout}>Logout</button>
                 ) : (
@@ -134,5 +130,4 @@ const FoodList = () => {
     )
 
 };
-
 export default FoodList;

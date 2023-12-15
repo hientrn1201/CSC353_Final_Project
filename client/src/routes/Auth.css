@@ -1,58 +1,56 @@
 /* AuthStyles.css */
-
 .auth-container {
-  width: 100%;
-  max-width: 320px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+    width: 100%;
+    max-width: 320px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
 .auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem; /* This provides space between form elements */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .auth-form label {
-  margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .auth-form input {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
 .auth-form button {
-  padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-transform: uppercase; /* Makes the text uppercase */
-  font-weight: bold; /* Makes the text bold */
-  letter-spacing: 1px; /* Increases spacing between letters */
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 .auth-form button:hover, .auth-form button:focus {
-  background-color: #0056b3;
-  outline: none; /* Removes the outline on focus */
+    background-color: #0056b3;
+    outline: none;
 }
 
 .auth-form h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 2rem; /* Increased space below the heading */
-  margin-top: 2rem;
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
 }
 
-/* If you have error messages or additional text, you can style them too */
 .auth-form .error-message {
-  color: #d9534f;
-  text-align: center;
+    color: #d9534f;
+    text-align: center;
 }

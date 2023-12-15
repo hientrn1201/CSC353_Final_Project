@@ -45,17 +45,15 @@ export const Auth = () => {
         }
     };
 
-      useEffect(() => {
+    useEffect(() => {
         if (currentUser && !signUpUser.username) {
             history.push('/');
         }
     }, [currentUser, signUpUser.username, history]);
 
-
     if (currentUser) {
         return null;
     }
-
 
     return (
         (

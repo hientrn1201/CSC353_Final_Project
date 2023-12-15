@@ -1,94 +1,88 @@
-/* FoodList.css *//* FoodListStyles.css */
-/* FoodListStyles.css */
-
 .food-table {
-  width: 100%;
-  table-layout: fixed;
-  color: #fff;
-  background-color: white;
+    width: 100%;
+    table-layout: fixed;
+    color: #fff;
+    background-color: white;
 }
 
 .food-table th, .food-table td {
-  padding: 12px;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    padding: 12px;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .food-table th.name-cell, .food-table td.name-cell {
-  width: 35%;
+    width: 35%;
 }
 
 .food-table th.rating-cell, .food-table td.rating-cell {
-  width: 15%;
+    width: 15%;
 }
 
 .food-table th.ingredients-cell, .food-table td.ingredients-cell {
-  width: 30%;
-  word-wrap: break-word;
-  white-space: normal; /* Override the nowrap */
+    width: 30%;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
 .food-table th.restriction-cell, .food-table td.restriction-cell {
-  width: 25%;
-  overflow-wrap: break-word; /* Break long words */
+    width: 25%;
+    overflow-wrap: break-word;
 }
 
-
-
 .filter-section {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .filter-input {
-  padding: 10px;
-  margin-right: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 .filter-select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 .filter-button {
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .filter-button:hover {
-  background-color: #0056b3;
+    background-color: #0056b3;
 }
 
-/* Add to FoodList.css */
 .auth-button-container {
-  text-align: right;
-  margin-bottom: 20px;
+    text-align: right;
+    margin-bottom: 20px;
 }
 
 .auth-button-container button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: bold;
 }
 
 .auth-button-container button:hover {
-  background-color: #0056b3;
+    background-color: #0056b3;
 }
 
 
