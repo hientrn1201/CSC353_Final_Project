@@ -6,7 +6,7 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 app.use(cors({
-  origin: 'http://localhost:3000'
+    origin: 'http://localhost:3000'
 }));
 app.use(express.json()); // To parse JSON bodies
 
@@ -14,7 +14,7 @@ app.use(express.json()); // To parse JSON bodies
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: '33511804',
     database: 'Food'
 }).promise();
 
@@ -33,123 +33,118 @@ db.connect((err) => {
 });
 
 app.get("/api/v1/foods", async (req, res) => {
-  const sql = `
-  SELECT
-    f.id AS id,
-    f.name AS name,
-    AVG(r.score) AS avgRatings,
-    GROUP_CONCAT(i.name) AS ingredients,
-    GROUP_CONCAT(dr.name) AS dietaryRestrictions
-  FROM
-    Food f
-    LEFT JOIN Rating r ON f.id = r.food_id
-    LEFT JOIN FoodIngredientMap fim ON f.id = fim.food_id
-    LEFT JOIN Ingredient i ON fim.ingredient_id = i.id
-    LEFT JOIN FoodDietaryRestriction fdr ON f.id = fdr.food_id
-    LEFT JOIN DietaryRestriction dr ON fdr.diet_id = dr.id
-  GROUP BY
-    f.id, f.name;
-  `
-  try {
-    const [results] = await db.query(sql);
-    res.status(200).json({
-      status: "success",
-      results: results.length,
-      data: results,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Server Error");
-  }
+    const sql = `
+        SELECT f.id                           AS id,
+               f.name                         AS name,
+               AVG(r.score)                   AS avgRatings,
+               GROUP_CONCAT(DISTINCT i.name)  AS ingredients,
+               GROUP_CONCAT(DISTINCT dr.name) AS dietaryRestrictions
+        FROM Food f
+                 LEFT JOIN Rating r ON f.id = r.food_id
+                 LEFT JOIN FoodIngredientMap fim ON f.id = fim.food_id
+                 LEFT JOIN Ingredient i ON fim.ingredient_id = i.id
+                 LEFT JOIN FoodDietaryRestriction fdr ON f.id = fdr.food_id
+                 LEFT JOIN DietaryRestriction dr ON fdr.diet_id = dr.id
+        GROUP BY f.id, f.name;
+    `
+    try {
+        const [results] = await db.query(sql);
+        res.status(200).json({
+            status: "success",
+            results: results.length,
+            data: results,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Server Error");
+    }
 });
 
 app.get("/api/v1/foods/:id", async (req, res) => {
-  const { id } = req.params;
-  const queryFood = `
-  SELECT
-    f.id AS id,
-    f.name AS name,
-    AVG(r.score) AS avgRatings,
-    GROUP_CONCAT(i.name) AS ingredients,
-    GROUP_CONCAT(dr.name) AS dietaryRestrictions
-  FROM
-    Food f
-    LEFT JOIN Rating r ON f.id = r.food_id
-    LEFT JOIN FoodIngredientMap fim ON f.id = fim.food_id
-    LEFT JOIN Ingredient i ON fim.ingredient_id = i.id
-    LEFT JOIN FoodDietaryRestriction fdr ON f.id = fdr.food_id
-    LEFT JOIN DietaryRestriction dr ON fdr.diet_id = dr.id
-  WHERE
-    f.id = ?
-  GROUP BY
-    f.id, f.name;
-  `
+    const {id} = req.params;
+    const queryFood = `
+        SELECT f.id                           AS id,
+               f.name                         AS name,
+               AVG(r.score)                   AS avgRatings,
+               GROUP_CONCAT(DISTINCT i.name)  AS ingredients,
+               GROUP_CONCAT(DISTINCT dr.name) AS dietaryRestrictions
+        FROM Food f
+                 LEFT JOIN Rating r ON f.id = r.food_id
+                 LEFT JOIN FoodIngredientMap fim ON f.id = fim.food_id
+                 LEFT JOIN Ingredient i ON fim.ingredient_id = i.id
+                 LEFT JOIN FoodDietaryRestriction fdr ON f.id = fdr.food_id
+                 LEFT JOIN DietaryRestriction dr ON fdr.diet_id = dr.id
+        WHERE f.id = ?
+        GROUP BY f.id, f.name;
 
-  const queryReviews = `
-  SELECT
-    r.id AS id,
-    r.review,
-    r.score,
-    u.username
-  FROM
-    Rating r
-  JOIN User u ON r.user_id = u.id
-  WHERE
-    r.food_id = ?;
-  `
+    `
 
-  try {
-    const [results] = await db.query(queryFood, 
-      [id,]
-    );
+    const queryReviews = `
+        SELECT r.id AS id,
+               r.review,
+               r.score,
+               u.username
+        FROM Rating r
+                 JOIN User u ON r.user_id = u.id
+        WHERE r.food_id = ?;
+    `
 
-    const [reviews] = await db.query(queryReviews,
-      [id,]
-    );
+    try {
+        const [results] = await db.query(queryFood,
+            [id,]
+        );
 
-    const data = {
-      ...results[0],
-      reviews
+        const [reviews] = await db.query(queryReviews,
+            [id,]
+        );
+
+        const data = {
+            ...results[0],
+            reviews
+        }
+
+        res.status(200).json({
+            status: "success",
+            data: data,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Server Error");
     }
-    
-    res.status(200).json({
-      status: "success",
-      data: data,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Server Error");
-  }
 });
 
 
 app.post(`/api/v1/foods/:id/addReview`, async (req, res) => {
-  const { userId, rating, review } = req.body;
-  const { id } = req.params;
-  try {
-    const [results] = await db.query(
-      "INSERT INTO rating(user_id, food_id, score, review) VALUES (?,?,?,?)",
-      [userId, id, rating, review]
-    ).catch(err => {throw err});
+    const {userId, rating, review} = req.body;
+    const {id} = req.params;
+    try {
+        const [results] = await db.query(
+            "INSERT INTO rating(user_id, food_id, score, review) VALUES (?,?,?,?)",
+            [userId, id, rating, review]
+        ).catch(err => {
+            throw err
+        });
 
-    res.status(200).json({
-      status: "success",
-      data: results.insertId,
-    });
-  } catch (error) {
-    res.send(error);
-    console.log(error);
-  }
+        res.status(200).json({
+            status: "success",
+            data: results.insertId,
+        });
+    } catch (error) {
+        res.send(error);
+        console.log(error);
+    }
 });
 
 app.post(`/api/v1/users/signup`, async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    // Check if username already exists
-    const [existedUser] = await db.query(
-      "SELECT * FROM user WHERE username = ?",
-      [username]
-    ).catch(err => {throw err});
+    const {username, password} = req.body;
+    try {
+        // Check if username already exists
+        const [existedUser] = await db.query(
+            "SELECT * FROM user WHERE username = ?",
+            [username]
+        ).catch(err => {
+            throw err
+        });
 
     if (existedUser[0] !== undefined) {
       return res.status(400).json({
@@ -157,48 +152,36 @@ app.post(`/api/v1/users/signup`, async (req, res) => {
         message: "Username already exists",
       });
     }
-
-    const [results] = await db.query(
-      "INSERT INTO user(username, password) VALUES (?,?)",
-      [username, password]
-    ).catch(err => {throw err});
-
-    res.status(200).json({
-      status: "success",
-      data: results.insertId,
-    });
-  } catch (error) {
-    res.send(error);
-    console.log(error);
-  }
 });
 
 app.post(`/api/v1/users/login`, async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    const [results] = await db.query(
-      "SELECT id FROM user WHERE username = ? AND password = ?",
-      [username, password]
-    ).catch(err => {throw err});
+    const {username, password} = req.body;
+    try {
+        const [results] = await db.query(
+            "SELECT id FROM user WHERE username = ? AND password = ?",
+            [username, password]
+        ).catch(err => {
+            throw err
+        });
 
-    if (!results.length) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Invalid username or password",
-      });
+        if (!results.length) {
+            return res.status(400).json({
+                status: "fail",
+                message: "Invalid username or password",
+            });
+        }
+
+        res.status(200).json({
+            status: "success",
+            data: results[0],
+        });
+    } catch (error) {
+        res.send(error);
+        console.log(error);
     }
-
-    res.status(200).json({
-      status: "success",
-      data: results[0],
-    });
-  } catch (error) {
-    res.send(error);
-    console.log(error);
-  }
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`);
 });
 

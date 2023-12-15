@@ -1,82 +1,138 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, {useContext, useEffect, useState} from 'react';
+import {useHistory} from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner'; // Assuming you are using React Bootstrap
 import FoodFinder from '../apis/FoodFinder'; // Adjust the import based on your actual API file
-import { FoodsContext } from '../context/FoodsContext'; // Adjust the context import
+import {FoodsContext} from '../context/FoodsContext'; // Adjust the context import
+import { useAuth } from '../context/AuthContext'; // Import useAuth
 import StarRating from "./StarRating";
-import { useAuth } from '../context/AuthContext';
+import './FoodList.css'; // Import your CSS file
 
-const FoodList = (props) => {
-  const history = useHistory();
-  const [isLoading, setIsLoading] = useState(true);
-  const { foods, setFoods, deleteFood } = useContext(FoodsContext); // Adjust context usage
+const FoodList = () => {
+    const history = useHistory();
+    const [isLoading, setIsLoading] = useState(true);
+    const {foods, setFoods} = useContext(FoodsContext);
+    const [filterRating, setFilterRating] = useState(0);
+    const [filterRestriction, setFilterRestriction] = useState("");
+    const [sortField, setSortField] = useState("");
+    const [sortDirection, setSortDirection] = useState("asc");
+    const { currentUser, logout } = useAuth();
 
-  const handleFoodSelect = (id) => {
-    history.push(`/foods/${id}`); // Update the URL for food
-  };
+    const handleLogout = async () => {
+        try {
+            await logout();
+            history.push('/auth'); // Or your route to the login page
+        } catch (error) {
+            console.error("Logout Failed", error);
+        }
+    };
 
-  // const handleDelete = (e, id) => {
-  //   e.stopPropagation();
-  //   FoodFinder.delete(`/${id}`) // Adjust the API call
-  //     .then(function (response) {
-  //       deleteFood(id); // Adjust the delete function
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // };
 
-  useEffect(() => {
-    FoodFinder.get("/foods") // Adjust the API call
-      .then((response) => {
-        setFoods(response.data.data); // Adjust the state-setting function
-      })
-      .then(() => {
-        setIsLoading((prevState) => !prevState);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [setFoods]);
+    const handleFoodSelect = (id) => {
+        history.push(`/foods/${id}`);
+    };
 
-  if (isLoading) {
+    useEffect(() => {
+        FoodFinder.get("/foods")
+            .then((response) => {
+                setFoods(response.data.data);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, [setFoods]);
+
+    const filteredFoods = foods.filter(food => {
+        return (filterRating === 0 || food.avgRatings >= filterRating) &&
+            (filterRestriction === "" || food.dietaryRestrictions.includes(filterRestriction));
+    });
+
+    const sortFoods = (field) => {
+        const newDirection = sortField === field && sortDirection === "asc" ? "desc" : "asc";
+        setSortField(field);
+        setSortDirection(newDirection);
+    };
+
+    const sortedFoods = [...filteredFoods].sort((a, b) => {
+        if (sortField === "name") {
+            return sortDirection === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+        } else if (sortField === "avgRatings") {
+            return sortDirection === "asc" ? a.avgRatings - b.avgRatings : b.avgRatings - a.avgRatings;
+        }
+        return 0;
+    });
+
+
+
+    if (isLoading) {
+        return (
+            <div className="d-flex justify-content-center">
+                <Spinner animation="border" role="status">
+                    <span className="sr-only">Loading...</span>
+                </Spinner>
+            </div>
+        );
+    }
+
+
+
     return (
-      <div className="d-flex justify-content-center">
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      </div>
-    );
-  }
 
-  return (
-    <div className="table-responsive">
-      <table className="table table-striped table-hover table-dark">
-        <thead>
-          <tr className="bg-primary">
-            <th scope="col">Food Name</th>
-            <th scope="col">Average Ratings</th>
-            <th scope="col">Ingredients</th>
-            <th scope="col">Dietary Restrictions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {foods.map(
-            ({ id, name, avgRatings, ingredients, dietaryRestrictions }) => ( // Adjust based on your food data structure
-              <tr onClick={() => handleFoodSelect(id)} key={id}>
-                <th scope="row">{name}</th>
-                <td>
-                  <StarRating rating={avgRatings} />
-                </td> 
-                <td>{ingredients}</td> {/* Adjust how you display ingredients */}
-                <td>{dietaryRestrictions}</td> {/* Adjust how you display dietary restrictions */}
-              </tr>
-            )
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
+        <div>
+             <div className="auth-button-container">
+                {currentUser ? (
+                    <button onClick={handleLogout}>Logout</button>
+                ) : (
+                    <button onClick={() => history.push('/auth')}>Login</button>
+                )}
+            </div>
+            <div className="mb-4">
+                <input
+                    type="number"
+                    className="filter-input"
+                    value={filterRating}
+                    onChange={(e) => setFilterRating(e.target.value)}
+                    placeholder="Minimum Rating"
+                />
+                <select
+                    className="filter-select"
+                    value={filterRestriction}
+                    onChange={(e) => setFilterRestriction(e.target.value)}
+                >
+                    <option value="">Select Dietary Restriction</option>
+                    <option value="None">None</option>
+                    <option value="Vegetarian">Vegetarian</option>
+                    <option value="Vegan">Vegan</option>
+                    <option value="Gluten-Free">Gluten-Free</option>
+                </select>
+            </div>
+            <div className="table-responsive">
+                <table className="table table-striped table-hover food-table">
+                    <thead>
+                    <tr className="bg-primary">
+                        <th scope="col" className="name-cell" onClick={() => sortFoods("name")}>Food Name</th>
+                        <th scope="col" className="rating-cell" onClick={() => sortFoods("avgRatings")}>Average
+                            Ratings
+                        </th>
+                        <th scope="col" className="ingredients-cell">Ingredients</th>
+                        <th scope="col" className="restriction-cell">Dietary Restrictions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {sortedFoods.map(({id, name, avgRatings, ingredients, dietaryRestrictions}) => (
+                        <tr onClick={() => handleFoodSelect(id)} key={id}>
+                            <th scope="row">{name}</th>
+                            <td className="rating-cell"><StarRating rating={avgRatings}/></td>
+                            <td className="ingredients-cell">{ingredients}</td>
+                            <td>{dietaryRestrictions}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    )
+
 };
 
 export default FoodList;

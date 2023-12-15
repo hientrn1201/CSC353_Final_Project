@@ -74,3 +74,6 @@ CREATE TABLE FoodIngredientMap
     FOREIGN KEY (food_id) REFERENCES food (id),
     FOREIGN KEY (ingredient_id) REFERENCES ingredient (id)
 );
+
+INSERT INTO User (username, password) VALUES ('anhhoang1402', '33511804');
+

@@ -7,6 +7,7 @@ import StarRating from '../components/StarRating'; // If applicable to food
 import { Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FoodsContext } from '../context/FoodsContext'; // Change to FoodsContext
+import './FoodDetailPage.css'; // Import your CSS file
 
 const FoodDetailPage = () => {
   const {id} = useParams();
@@ -14,18 +15,22 @@ const FoodDetailPage = () => {
   const {selectedFood, setSelectedFood} = useContext(FoodsContext);
 
   useEffect(() => {
-    FoodFinder.get(`/foods/${id}`) // Adjust the API call
-      .then((response) => {
-        const data = response.data.data;
-        setSelectedFood(data);
-      })
-      .then(()=>{
-        setIsLoading(prev => !prev);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [setSelectedFood, id]);
+  const fetchFoodDetails = async () => {
+    setIsLoading(true);
+    try {
+      const response = await FoodFinder.get(`/foods/${id}`);
+      setSelectedFood(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
+
+  fetchFoodDetails();
+}, [id, setSelectedFood]);
+
+
+
 
   if (isLoading) {
     return (
@@ -38,20 +43,28 @@ const FoodDetailPage = () => {
   }
 
   return (
-    <div>
+    <div className="food-detail-container">
       {selectedFood && (
         <>
-          <h1 className="font-weight-light display-1 text-center">{selectedFood.name}</h1>
-          {/* Adjust the displayed information according to your food data structure */}
-          {/* Include other food-specific details like ingredients, dietary restrictions, etc. */}
-          <div className="mt-3">
-            <Reviews reviews={selectedFood.reviews}/> {/* Adjust as needed */}
+          <h1 className="food-detail-heading text-center">{selectedFood.name}</h1>
+          <div className="text-center">
+            {selectedFood.avgRatings &&
+              <>
+                <StarRating rating={selectedFood.avgRatings} />
+                <p className="food-detail-rating">Average Rating: {selectedFood.avgRatings}</p>
+              </>
+            }
+            <p className="food-detail-text">Ingredients: {selectedFood.ingredients}</p>
+            <p className="food-detail-text">Dietary Restrictions: {selectedFood.dietaryRestrictions}</p>
           </div>
-          <AddReview /> {/* If applicable to food */}
+          <div className="food-detail-reviews">
+            {selectedFood.reviews && <Reviews reviews={selectedFood.reviews} />}
+          </div>
+          <AddReview foodId={id} />
         </>
       )}
     </div>
-  )
+  );
 }
 
 export default FoodDetailPage;
