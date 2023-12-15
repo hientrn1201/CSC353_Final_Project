@@ -12,7 +12,7 @@ const Reviews = (props) => {
           className="card text-white bg-primary mb-3 mr-3"
           style={{ maxWidth: "15rem" }}
         >
-          <div className="card-header">{review.name}</div>
+          <div className="card-header">{review.username}</div>
           <div className="card-body">
             <h5 className="card-title">
               <StarRating rating={review.score} />

@@ -1,47 +1,46 @@
 import React, { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import FoodFinder from "../apis/FoodFinder";
+import { useAuth } from "../context/AuthContext";
 
 const AddReview = () => {
   const {id} = useParams()
   const history = useHistory()
-  const [name, setName] = useState("");
   const [rating, setRating] = useState(1);
   const [review, setReview] = useState("");
+  const { currentUser } = useAuth();
+  const userId =  currentUser ? currentUser.id : '';
 
-  const isDisabled = name.trim().length === 0 || review.trim().length === 0
+  const isDisabled = review.trim().length === 0
 
   const handleSubmit = e => {
-    e.preventDefault();
-    FoodFinder.post(`/${id}/addReview`, {
-      name,
-      rating,
-      review
-    })
-    .then(function (response) {
-      setName("");
-      setRating(0);
-      setReview("");
-      history.push('/')
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    if (!currentUser) {
+      alert("Please log in to leave a review.");
+      history.push('/auth')
+    } else {
+      e.preventDefault();
+      FoodFinder.post(`/foods/${id}/addReview`, {
+        userId,
+        rating,
+        review,
+      })
+      .then(function (response) {
+        alert("Review submitted!");
+        setRating(0);
+        setReview("");
+        history.push('/')
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
   }
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <div className="form-row">
-          <div className="form-group col-8">
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="form-control"
-            />
-          </div>
+
           <div className="form-group col-4">
             <label htmlFor="rating">Rating</label>
             <select

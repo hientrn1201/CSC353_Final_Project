@@ -4,16 +4,12 @@ import Spinner from 'react-bootstrap/Spinner'; // Assuming you are using React B
 import FoodFinder from '../apis/FoodFinder'; // Adjust the import based on your actual API file
 import { FoodsContext } from '../context/FoodsContext'; // Adjust the context import
 import StarRating from "./StarRating";
+import { useAuth } from '../context/AuthContext';
 
 const FoodList = (props) => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
   const { foods, setFoods, deleteFood } = useContext(FoodsContext); // Adjust context usage
-
-  // const handleUpdate = (e, id) => {
-  //   e.stopPropagation();
-  //   history.push(`/foods/${id}/update`); // Update the URL for food
-  // };
 
   const handleFoodSelect = (id) => {
     history.push(`/foods/${id}`); // Update the URL for food
@@ -34,7 +30,6 @@ const FoodList = (props) => {
     FoodFinder.get("/foods") // Adjust the API call
       .then((response) => {
         setFoods(response.data.data); // Adjust the state-setting function
-        console.log(response.data.data[0]);
       })
       .then(() => {
         setIsLoading((prevState) => !prevState);
