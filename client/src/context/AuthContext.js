@@ -7,21 +7,23 @@ export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
 
     const signup = async (username, password) => {
-        FoodFinder.post("/users/signup", { username, password, })
-        .then((res) => {
-            const id  = res.data.data;
+        try {
+            const response = await FoodFinder.post("/users/signup", { username, password });
+            const id = response.data.data;
             setCurrentUser({ id, username });
-        })
-        .catch((err) => console.log(err));
+        } catch (err) {
+            throw err;
+        }
     }
 
     const login = async (username, password) => {
-        FoodFinder.post("/users/login", { username, password })
-        .then((res) => {
-            const id  = res.data.data.id;
+        try {
+            const response = await FoodFinder.post("/users/login", { username, password });
+            const id = response.data.data.id;
             setCurrentUser({ id, username });
-        })
-        .catch((err) => console.log(err));
+        } catch (err) {
+            throw err;
+        }
     };
 
     const logout = () => {

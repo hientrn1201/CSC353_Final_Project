@@ -56,6 +56,7 @@ const FoodList = (props) => {
           <tr className="bg-primary">
             <th scope="col">Food Name</th>
             <th scope="col">Average Ratings</th>
+            <th scope="col">Ingredients</th>
             <th scope="col">Dietary Restrictions</th>
           </tr>
         </thead>

@@ -13,8 +13,15 @@ export const Auth = () => {
             await auth.login(loginUser.username, loginUser.password);
             history.push('/');
         } catch (err) {
-            console.log(err);
+            if (err.request && err.request.response) {
+                console.log(JSON.parse(err.request.response).message);
+                alert(JSON.parse(err.request.response).message);
+            } else {
+                console.log(err);
+                alert(err);
+            }
         }
+        
     };
 
     const handleSignUp = async () => {
@@ -22,14 +29,19 @@ export const Auth = () => {
             await auth.signup(signUpUser.username, signUpUser.password);
             history.push('/');
         } catch (err) {
-            console.log(err);
+            if (err.request && err.request.response) {
+                console.log(JSON.parse(err.request.response).message);
+                alert(JSON.parse(err.request.response).message);
+            } else {
+                console.log(err);
+                alert(err);
+            }
         }
+        
     };
 
     return (
-        (auth.currentUser) ? (
-            history.push('/')
-        ) : (
+        (
             <div>
                 <h2>Login</h2>
                 <form>

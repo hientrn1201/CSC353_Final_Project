@@ -151,7 +151,7 @@ app.post(`/api/v1/users/signup`, async (req, res) => {
       [username]
     ).catch(err => {throw err});
 
-    if (existedUser) {
+    if (existedUser[0] !== undefined) {
       return res.status(400).json({
         status: "fail",
         message: "Username already exists",
