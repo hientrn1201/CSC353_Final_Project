@@ -30,7 +30,7 @@ except mysql.connector.Error as error_descriptor:
     print("Failed using database: {}".format(error_descriptor))
     exit(1)
 
-with open("db/FoodSchema.sql", "r") as schema_file:
+with open("FoodSchema.sql", "r") as schema_file:
     schema_string = schema_file.read()
 
 try:
