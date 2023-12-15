@@ -123,19 +123,74 @@ app.get("/api/v1/foods/:id", async (req, res) => {
 });
 
 
-
-app.post(`/api/v1/foods/:id/addRating`, async (req, res) => {
-  const { user_id, score, review } = req.body;
+app.post(`/api/v1/foods/:id/addReview`, async (req, res) => {
+  const { userId, rating, review } = req.body;
   const { id } = req.params;
   try {
     const [results] = await db.query(
       "INSERT INTO rating(user_id, food_id, score, review) VALUES (?,?,?,?)",
-      [user_id, id, score, review]
+      [userId, id, rating, review]
     ).catch(err => {throw err});
 
     res.status(200).json({
       status: "success",
       data: results.insertId,
+    });
+  } catch (error) {
+    res.send(error);
+    console.log(error);
+  }
+});
+
+app.post(`/api/v1/users/signup`, async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    // Check if username already exists
+    const [existedUser] = await db.query(
+      "SELECT * FROM user WHERE username = ?",
+      [username]
+    ).catch(err => {throw err});
+
+    if (existedUser) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Username already exists",
+      });
+    }
+
+    const [results] = await db.query(
+      "INSERT INTO user(username, password) VALUES (?,?)",
+      [username, password]
+    ).catch(err => {throw err});
+
+    res.status(200).json({
+      status: "success",
+      data: results.insertId,
+    });
+  } catch (error) {
+    res.send(error);
+    console.log(error);
+  }
+});
+
+app.post(`/api/v1/users/login`, async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const [results] = await db.query(
+      "SELECT id FROM user WHERE username = ? AND password = ?",
+      [username, password]
+    ).catch(err => {throw err});
+
+    if (!results.length) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid username or password",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: results[0],
     });
   } catch (error) {
     res.send(error);
