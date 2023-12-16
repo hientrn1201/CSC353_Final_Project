@@ -20,7 +20,7 @@ Rate-My-College-Food/
 - Node.js and npm installed
 - MySQL server installed
 
-### Backend Setup
+### Database and Dependencies Setup
 
 1. Install the required Python package:
    ```bash
@@ -40,7 +40,7 @@ Rate-My-College-Food/
    python populate-food.py
    ```
 
-### Frontend Setup
+### Application Setup
 
 1. Navigate to the `server` directory:
    ```bash
